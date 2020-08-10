@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 import {
   Container,
+  EmptyContainer,
   ScrollView,
   Input,
   Item,
@@ -110,8 +111,12 @@ const Main: React.FC = () => {
 
   return (
     <Container>
-      {!items ? (
-        <Text>teste</Text>
+      {items.length < 1 ? (
+        <EmptyContainer>
+          <Text style={{ color: '#c0c0c0', fontSize: 20 }}>
+            Você ainda não possui tarefas. :(
+          </Text>
+        </EmptyContainer>
       ) : (
         <ScrollView
           data={items}

@@ -13,6 +13,16 @@ export const Container = styled.SafeAreaView`
   background-color: #36213e;
 `;
 
+export const EmptyContainer = styled.SafeAreaView`
+  align-items: center;
+  justify-content: center;
+
+  text-align: justify;
+
+  flex: 1;
+  background-color: #36213e;
+`;
+
 export const ScrollView = styled(FlatList)``;
 
 export const Item = styled.TouchableOpacity<TextProps>`
