@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Alert } from 'react-native';
 
-import Icon from 'react-native-vector-icons/Fontisto';
+import AsyncStorage from '@react-native-community/async-storage';
 
 import {
   Container,
@@ -12,21 +13,26 @@ import {
   CheckboxIcon,
   DeleteIcon,
 } from './styles';
-import { Alert } from 'react-native';
 
 interface ItemProps {
   todo: string;
   selected: boolean;
 }
 
+interface RenderProps {
+  item: ItemProps;
+  index: number;
+}
+
 const Main: React.FC = () => {
   const [selected, setSelected] = useState(false);
-  const [items, setItems] = useState<Array<ItemProps>>([]);
+  const [items, setItems] = useState<ItemProps[]>([]);
+
   const [inputValue, setInputValue] = useState('');
 
-  const handleCheckbox = (eIndex: number) => {
+  const handleCheckbox = async (eIndex: number) => {
     const oldArray = items;
-    const array = items.filter((e, index) => index === eIndex);
+    const array = oldArray.filter((e, index) => index === eIndex);
     const [oneItem] = array;
 
     oneItem.selected ? (oneItem.selected = false) : (oneItem.selected = true);
@@ -36,26 +42,15 @@ const Main: React.FC = () => {
 
     setItems(oldArray);
     setSelected(!selected);
-  };
 
-  const changeArray = (eIndex: number) => {
-    const oldArray = items;
-    const array = items.filter((e, index) => index === eIndex);
-    const [oneItem] = array;
-
-    oneItem.selected ? (oneItem.selected = false) : (oneItem.selected = true);
-
-    oldArray.splice(eIndex, 1);
-    oldArray.splice(eIndex, 0, oneItem);
-
-    setItems(oldArray);
+    await AsyncStorage.setItem('@todoapp:list', JSON.stringify(oldArray));
   };
 
   const handleInput = (e: string) => {
     setInputValue(e);
   };
 
-  const handleRemoveItem = (elementIndex: number) => {
+  const handleRemoveItem = async (elementIndex: number) => {
     if (items.length === 1) {
       setItems([]);
     }
@@ -63,45 +58,87 @@ const Main: React.FC = () => {
     /** retorna todos os itens que não tenham o index igual a 'elementIndex' */
     const array = items.filter((e, index) => index !== elementIndex);
 
-    setItems(array);
+    await AsyncStorage.setItem('@todoapp:list', JSON.stringify(array));
+
+    return setItems(array);
   };
 
-  const handleArray = (value: string) => {
+  const handleArray = async (value: string) => {
     if (value.length < 1)
       return Alert.alert('Você precisa inserir alguma coisa x.x');
-    setItems([
-      ...items,
+
+    setItems((prev) => [
+      ...prev,
       {
         todo: inputValue,
         selected: false,
       },
     ]);
+    // setItems([
+    //   ...items,
+    //   {
+    //     todo: inputValue,
+    //     selected: false,
+    //   },
+    // ]);
 
     setInputValue('');
+    return await AsyncStorage.setItem('@todoapp:list', JSON.stringify(items));
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    async function readDataFromStorage() {
+      const data = await AsyncStorage.getItem('@todoapp:list');
+
+      if (data !== null) return setItems(JSON.parse(data));
+
+      return setItems([]);
+    }
+
+    readDataFromStorage();
+  }, []);
+
+  useEffect(() => {
+    async function saveToStorage() {
+      if (items.length < 1) return;
+
+      await AsyncStorage.setItem('@todoapp:list', JSON.stringify(items));
+    }
+
+    saveToStorage();
+  }, [items]);
 
   return (
     <Container>
-      <ScrollView
-        data={items}
-        keyExtractor={(item, index) => String(index)}
-        renderItem={({ item, index }) => (
-          <Item selected={item.selected} onPress={() => handleCheckbox(index)}>
-            <CheckboxIcon
-              name={item.selected ? 'checkbox-active' : 'checkbox-passive'}
-              size={16}
-              color={'#c0c0c0'}
+      {!items ? (
+        <Text>teste</Text>
+      ) : (
+        <ScrollView
+          data={items}
+          keyExtractor={(item, index) => String(index)}
+          renderItem={({ item, index }: RenderProps) => (
+            <Item
               selected={item.selected}
-            />
-            <Text selected={item.selected}>{item.todo}</Text>
-            <IconView onPress={() => handleRemoveItem(index)}>
-              <DeleteIcon name="minus-a" size={16} />
-            </IconView>
-          </Item>
-        )}
-      />
+              onPress={() => handleCheckbox(index)}
+            >
+              <CheckboxIcon
+                name={item.selected ? 'checkbox-active' : 'checkbox-passive'}
+                size={16}
+                color={'#c0c0c0'}
+                selected={item.selected}
+              />
+              <Text selected={item.selected}>{item.todo}</Text>
+              <IconView
+                onPress={() => handleRemoveItem(index)}
+                selected={item.selected}
+              >
+                <DeleteIcon name="minus-a" size={16} />
+              </IconView>
+            </Item>
+          )}
+        />
+      )}
+
       <Input
         placeholder="O que você tem à fazer?"
         placeholderTextColor="#c0c0c0"

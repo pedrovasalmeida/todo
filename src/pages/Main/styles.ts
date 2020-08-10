@@ -52,7 +52,7 @@ export const Text = styled.Text<TextProps>`
     props.selected ? 'rgba(192, 192, 192, 0.3)' : '#c0c0c0'};
 `;
 
-export const IconView = styled.TouchableOpacity`
+export const IconView = styled.TouchableOpacity<TextProps>`
   position: absolute;
   top: 30%;
   right: 5%;
@@ -63,8 +63,8 @@ export const IconView = styled.TouchableOpacity`
   width: 32px;
   height: 32px;
 
-  background-color: #c0c0c0;
-
+  background-color: ${(props) =>
+    props.selected ? 'rgba(140, 0, 0, 0.5)' : 'rgba(140, 0, 0, 1)'};
   border-radius: 50px;
 `;
 
@@ -73,10 +73,9 @@ export const CheckboxIcon = styled(Icon)<TextProps>`
   top: 40%;
   left: 5%;
 
-  color: ${(props) =>
-    props.selected ? 'rgba(192, 192, 192, 0.3)' : '#c0c0c0'};
+  color: ${(props) => (props.selected ? 'rgba(19, 195, 0, 0.5)' : '#c0c0c0')};
 `;
 
 export const DeleteIcon = styled(Icon)`
-  color: #36213e;
+  color: #c0c0c0;
 `;
