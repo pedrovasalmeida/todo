@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
 import { shade } from 'polished';
+import { FlatList } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Fontisto';
 
@@ -12,9 +13,11 @@ export const Container = styled.SafeAreaView`
   background-color: #36213e;
 `;
 
-export const ScrollView = styled.ScrollView``;
+export const ScrollView = styled(FlatList)``;
 
-export const Item = styled.TouchableOpacity`
+export const Item = styled.TouchableOpacity<TextProps>`
+  position: relative;
+
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
@@ -24,7 +27,8 @@ export const Item = styled.TouchableOpacity`
 
   padding: 2px 16px;
 
-  background-color: ${shade(0.4, '#36213E')};
+  background-color: ${(props) =>
+    props.selected ? `${shade(0.2, '#36213E')}` : `${shade(0.4, '#36213E')}`};
 `;
 
 export const Input = styled.TextInput`
@@ -39,12 +43,20 @@ export const Input = styled.TextInput`
 export const Text = styled.Text<TextProps>`
   margin: 0 24px;
 
+  padding: 0 24px;
+
   font-size: 16px;
 
-  color: #c0c0c0;
+  text-decoration: ${(props) => (props.selected ? 'line-through' : 'none')};
+  color: ${(props) =>
+    props.selected ? 'rgba(192, 192, 192, 0.3)' : '#c0c0c0'};
 `;
 
 export const IconView = styled.TouchableOpacity`
+  position: absolute;
+  top: 30%;
+  right: 5%;
+
   justify-content: center;
   align-items: center;
 
@@ -54,6 +66,15 @@ export const IconView = styled.TouchableOpacity`
   background-color: #c0c0c0;
 
   border-radius: 50px;
+`;
+
+export const CheckboxIcon = styled(Icon)<TextProps>`
+  position: absolute;
+  top: 40%;
+  left: 5%;
+
+  color: ${(props) =>
+    props.selected ? 'rgba(192, 192, 192, 0.3)' : '#c0c0c0'};
 `;
 
 export const DeleteIcon = styled(Icon)`
