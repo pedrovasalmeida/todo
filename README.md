@@ -21,7 +21,7 @@ The app has one screen, which the user can add tasks to do, mark them as done an
 
 ---
 
-# To Contribute
+# Install
 
 - Clone this repo with `git clone https://github.com/pedrovasalmeida/todo.git`;
 - Run `yarn` to download the dependencies;
