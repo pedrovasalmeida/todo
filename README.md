@@ -6,7 +6,7 @@ A simple To-Do app developed using React Native CLI with TypeScript.
 
 ### Techs used:
 
-- React Native CLI
+- React Native
 - TypeScript
 
 #### Libraries:
