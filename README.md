@@ -8,6 +8,8 @@ A simple To-Do app developed using React Native CLI with TypeScript.
 
 - React Native CLI
 - TypeScript
+
+#### Libraries:
 - Styled Components
 - Polished
 - React Native Vector Icons
